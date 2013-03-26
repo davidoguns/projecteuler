@@ -1,15 +1,14 @@
-objects = main.o primes.o
+objects = main.o
 target = problem003
-CXXFLAGS = -std=c++11
 
 $(target) : $(objects)
-	$(CXX) $(CXXFLAGS) -o $(target) $(objects)
+	$(CXX) -o $(target) $(objects)
 
 main.o :
-	$(CXX) $(CXXFLAGS) -c main.cpp
+	$(CXX) -c main.cpp
 
 primes.o :
-	$(CXX) $(CXXFLAGS) -c primes.cpp
+	$(CXX) -c primes.cpp
 
 clean :
 	rm -f $(target) $(objects)
