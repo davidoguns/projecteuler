@@ -1,5 +1,5 @@
 //David Oguns
-//Project Euler Problem 05
+//Project Euler Problem 06
 
 #include <iostream>
 #include <cmath>

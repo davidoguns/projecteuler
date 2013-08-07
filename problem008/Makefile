@@ -1,5 +1,5 @@
 objects = main.o
-target = problem005
+target = problem008
 CXXFLAGS = -std=c++11
 
 $(target) : $(objects)
