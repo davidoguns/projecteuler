@@ -1,13 +1,11 @@
 //David Oguns
-//Project Euler Factorization Utility
+//Project Euler Problem 05
 
 #include <iostream>
-#include <cmath>
-#include <string>
-#include <numeric>
-#include <tuple>
 #include <set>
-#include <list>
+#include <tuple>
+#include <map>
+#include <cmath>
 
 using namespace std;  //gettin lazy...too much std stuff
 
@@ -40,21 +38,34 @@ set<tuple<int,int>> factorize(unsigned long long number)
   return std::move(factors);
 }
 
+//definitely could do this better...as in a single pass creates the map and doesn't hold onto the sets
 int main(int argc, char **argv)
 {
-  if(argc != 2)
-  {
-    cerr << "Must specify a positive integer to factorize!!!" << endl;
-    return 1;
+  map<int, int> completeFactors;
+  for(int n = 1; n <= 20; ++n)
+  { 
+    for(const tuple<int, int> &factor:factorize(n))
+    {
+      auto inMapItr = completeFactors.find(get<0>(factor));
+      if(inMapItr == completeFactors.end())
+      { //means we don't have this base yet at all, insert into map
+        completeFactors[get<0>(factor)] = get<1>(factor);
+      }
+      else if(inMapItr->second < get<1>(factor)) //in map, but lower power/order of magnitude
+      { //means we found something like 3^3 while 3^1 was in the map...replace
+        completeFactors[get<0>(factor)] = get<1>(factor);
+      }
+    }
   }
 
-  set<tuple<int, int>> factors = factorize(std::atoi(argv[1]));
-
-  for(tuple<int, int> f:factors)
+  int solution = 1;
+  for(const pair<int, int> &f:completeFactors)
   {
     cout << std::get<0>(f) << " ^ " << std::get<1>(f) << endl;
+    solution *= pow<int>(get<0>(f), get<1>(f));
   }
-
+  cout << "Solution: " << solution << endl;
+  
   return 0;
 }
 
