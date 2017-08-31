@@ -2,12 +2,9 @@
 //Project Euler Problem 08
 
 #include <iostream>
-#include <fstream>
 #include <sstream>
 #include <string>
-#include <numeric>
 #include <queue>
-#include <iterator>
 
 using namespace std;  //gettin lazy...too much std stuff
 
@@ -15,7 +12,7 @@ using namespace std;  //gettin lazy...too much std stuff
 //problem is to allow zeroes in the queue, and take the product of the queue
 
 template <typename T>
-T queue_product(queue<T> & queue)
+T queue_product(queue<T> & queue) //rotates the queue in place
 {
   T queue_product = 1;
   for(size_t i = size_t(0); i < queue.size(); ++i)
