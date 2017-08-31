@@ -6,70 +6,56 @@
 #include <sstream>
 #include <string>
 #include <numeric>
+#include <queue>
+#include <iterator>
 
 using namespace std;  //gettin lazy...too much std stuff
 
-//this method actually only gets called once in a slightly optimized solution(?)
-unsigned long window_product(const string &longNumber, unsigned int begin, unsigned int window_size)
+//due to zeroes existing in the sliding window, the most effective way to handle this
+//problem is to allow zeroes in the queue, and take the product of the queue
+
+template <typename T>
+T queue_product(queue<T> & queue)
 {
-  unsigned long product = 1;
-  for(unsigned int idx = 0; idx < window_size; ++idx)
+  T queue_product = 1;
+  for(size_t i = size_t(0); i < queue.size(); ++i)
   {
-    product *= atoi(longNumber.substr(begin+idx, 1).c_str());
+    T queue_item = queue.front();
+    queue.pop();
+    queue.push(queue_item);
+    queue_product *= queue_item;
   }
-  return product;
+  return queue_product;
 }
 
 int main(int argc, char **argv)
 { 
-  ifstream fin(argv[1]);
-  if(!fin)
-  {
-    cerr << "Can't read input file for number." << endl;
-    return 1;
-  }
-  stringstream sstream; //used like Java stringbuffer/stringbuilder
+  unsigned int window_size = 0;
+  istringstream(argv[1]) >> window_size; //cmd line arg is window size
+  unsigned long long largest_product = 0;
+  queue<unsigned long long> digit_queue;
   string line;
-  while(fin >> line)
-  {
-    sstream << line;
-  }
-  fin.close();
-  string longNumber;
-  sstream >> longNumber;  //read out entire long number
 
-  cout << "Number: ["<<longNumber<<"]" << endl;
-  unsigned long largestProduct = 0;
-  const unsigned int window_size = 5;   //also the number of consecutive digits we're looking at
-
-  /*  We're going to move a sliding window across the number
-   *
-   */
-  unsigned int previousProduct = window_product(longNumber, 0, window_size);
-  unsigned int numberOut = atoi(longNumber.substr(0, 1).c_str());   //this is the number we are NO LONGER including in our product
-  //TODO: don't like having this logic in there twice
-  if(previousProduct > largestProduct)
+  while(cin >> line)
   {
-    previousProduct = largestProduct;
-  }
-  for(unsigned int beginIndex = 1; beginIndex+window_size < longNumber.size(); ++beginIndex)
-  {
-    unsigned int numberIn = atoi(longNumber.substr(beginIndex+(window_size-1), 1).c_str());  //? - off by one?
-
-    //grand idea - doesn't work with digits == 0
-    //previousProduct *= numberIn;
-    //previousProduct /= numberOut;
-    previousProduct = window_product(longNumber, beginIndex, window_size);
-  
-    if(previousProduct > largestProduct)
+    for(char input:line)
     {
-      largestProduct = previousProduct;
+      if(input < '0' || input > '9') continue; //skip non digits
+      unsigned long long digit = input - '0';
+      digit_queue.push(digit);
+      if(digit_queue.size() > size_t(window_size))
+      {
+        digit_queue.pop();
+      }
+      const unsigned long long product = queue_product(digit_queue);
+      if(product > largest_product)
+      {
+        largest_product = product;
+      }
     }
-    numberOut = atoi(longNumber.substr(beginIndex,1).c_str());
   }
 
-  cout << "Solution: " << largestProduct << endl;
+  cout << largest_product;
   return 0;
 }
-
 
